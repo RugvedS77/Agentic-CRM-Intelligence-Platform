@@ -212,6 +212,7 @@ __marimo__/
 *.env
 .env
 */.env
+/plan_docs
 
 # Ignore Docker-related files
 Dockerfile

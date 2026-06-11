@@ -13,21 +13,22 @@ parser = PydanticOutputParser(
 
 def classify_email(
     email_content: str,
-    thread_context: str
+    thread_context: str,
+    rag_context: str
 ) -> ClassificationResult:
 
-    rag_chunks = retrieve_context(
-        email_content,
-        k=3
-    )
+    # rag_chunks = retrieve_context(
+    #     email_content,
+    #     k=3
+    # )
 
-    rag_context = "\n\n".join(
-        [
-            f"Source: {chunk['source']}\n"
-            f"{chunk['content']}"
-            for chunk in rag_chunks
-        ]
-    )
+    # rag_context = "\n\n".join(
+    #     [
+    #         f"Source: {chunk['source']}\n"
+    #         f"{chunk['content']}"
+    #         for chunk in rag_chunks
+    #     ]
+    # )
 
     prompt = ChatPromptTemplate.from_template(
         """

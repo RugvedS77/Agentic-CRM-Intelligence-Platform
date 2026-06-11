@@ -1,7 +1,7 @@
 # app/agent/nodes/planner.py
 
 from app.agent.state import AgentState
-from app.services.planner import create_plan
+from app.services.planner_service import create_plan
 
 
 def planner_node(
@@ -13,8 +13,19 @@ def planner_node(
         classification=state["classification"],
         rag_context=state["rag_context"]
     )
+    if (
+        state["classification"]["category"]
+        == "security_incident"
+    ):
+        plan.tools = [
+            tool
+            for tool in plan.tools
+            if tool != "draft_reply"
+        ]
 
     state["plan"] = plan.tools
+
+    state["priority"] = plan.priority
 
     state["reasoning_trace"].append(
         {
@@ -27,7 +38,8 @@ def planner_node(
             "observation":
                 {
                     "reasoning": plan.reasoning,
-                    "tools": plan.tools
+                    "tools": plan.tools,
+                    "priority": plan.priority
                 },
 
             "next":

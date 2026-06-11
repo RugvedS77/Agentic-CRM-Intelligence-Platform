@@ -8,6 +8,8 @@ from app.api.rag import router as rag_router
 from app.api.classifier import router as classifier_router
 from app.api.planner import router as planner_router
 
+from app.api.agent import router as agent_router
+
 app = FastAPI(
     title="SenAI CRM Intelligence Platform",
     version="1.0.0"
@@ -33,3 +35,4 @@ app.include_router(thread_router)
 app.include_router(rag_router)
 app.include_router(classifier_router)
 app.include_router(planner_router)
+app.include_router(agent_router)

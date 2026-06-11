@@ -1,13 +1,13 @@
 # app/services/planner.py
 
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_google_genai import ChatGoogleGenerativeAI  # type: ignore
 
 from app.schemas.agent_plan_schema import AgentPlan
 from app.agent.tools_registry import TOOLS
 
 
 llm = ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash",
+    model="gemini-2.5-flash-lite",
     temperature=0
 )
 
@@ -37,8 +37,18 @@ Additional Guidance:
 - GDPR requests should consult the knowledge base before action.
 - Refund requests should review customer history and refund policy.
 - Legal threats should gather sufficient context before escalation.
+- Legal threats must always be escalated to a human after legal review and drafting reply.
 - Enterprise customers and VIP customers require account review before final decisions.
 - When policy decisions are involved, prefer using search_knowledge_base.
+- If urgency = critical → always include escalate_to_human
+For:
+- refund
+- billing
+- technical_support
+- legal_threat involving SLA disputes
+- vip_churn
+
+Include: search_knowledge_base, draft_reply
 
 Available Tools:
 {tools}

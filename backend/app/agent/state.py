@@ -12,7 +12,7 @@ class AgentState(TypedDict):
 
     classification: dict
 
-    rag_context: list
+    rag_context: str
 
     reasoning_trace: list
 
@@ -21,5 +21,8 @@ class AgentState(TypedDict):
     dry_run: bool
 
     plan: list
+
+    tool_results: list
+    priority: str
 
     final_action: str | None
