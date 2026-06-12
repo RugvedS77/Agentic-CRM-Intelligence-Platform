@@ -215,7 +215,10 @@ __marimo__/
 /plan_docs
 
 # Ignore Docker-related files
-Dockerfile
+# Dockerfile
 # docker-compose.yml
 # docker-compose.*.yml
 # .dockerignore
+repomix-output.xml
+frontend-fixed.tar.gz
+TEST_PLAN.md

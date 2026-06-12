@@ -24,3 +24,5 @@ chromadb
 sentence-transformers
 
 playwright
+beautifulsoup4
+requests

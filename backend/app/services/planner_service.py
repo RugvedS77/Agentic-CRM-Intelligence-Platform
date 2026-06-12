@@ -7,7 +7,7 @@ from app.agent.tools_registry import TOOLS
 
 
 llm = ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash-lite",
+    model="gemini-2.5-flash",
     temperature=0
 )
 
@@ -15,40 +15,25 @@ planner_llm = llm.with_structured_output(
     AgentPlan
 )
 
-
 PLANNER_PROMPT = """
 You are an autonomous CRM triage agent.
 
 Your job is to decide which tools should be executed.
 
 Rules:
-
 - Security incidents must never receive auto replies.
 - Legal threats must be escalated.
-- GDPR requests require compliance review.
+- GDPR requests require compliance review and the creation of an internal ticket using `create_internal_ticket`.
 - Maximum 6 tool calls.
-- Only choose tools from the provided tool list.
-- Do not invent tools.
-- Minimize unnecessary tool usage.
-- Prefer escalation when confidence is low.
-
-Additional Guidance:
-
-- GDPR requests should consult the knowledge base before action.
-- Refund requests should review customer history and refund policy.
-- Legal threats should gather sufficient context before escalation.
-- Legal threats must always be escalated to a human after legal review and drafting reply.
-- Enterprise customers and VIP customers require account review before final decisions.
-- When policy decisions are involved, prefer using search_knowledge_base.
-- If urgency = critical → always include escalate_to_human
-For:
-- refund
-- billing
-- technical_support
-- legal_threat involving SLA disputes
-- vip_churn
-
-Include: search_knowledge_base, draft_reply
+- If urgency = "Critical", you MUST include `escalate_to_human` and NEVER use `send_auto_reply`.
+- If the email mentions public reviews, Twitter, G2, or Trustpilot, you MUST use `scrape_public_sentiment`.
+- If `requires_human` is true from the classification, ensure `escalate_to_human` is in the plan.
+- Only choose tools from the provided tool list. Do not invent tools.
+- CRITICAL SAFEGUARDS:
+  * NEVER use `send_auto_reply` for Spam, Legal, or Security categories.
+  * NEVER use `send_auto_reply` when urgency is Critical.
+  * NEVER use `send_auto_reply` when requires_human is true.
+  * For GDPR/data privacy requests, ALWAYS include `flag_for_legal` and `create_internal_ticket`, and NEVER use `send_auto_reply`.
 
 Available Tools:
 {tools}
@@ -62,7 +47,6 @@ Email:
 Retrieved Policy Context:
 {rag_context}
 """
-
 
 def create_plan(
     email_text: str,

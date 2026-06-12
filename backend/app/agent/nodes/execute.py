@@ -27,20 +27,24 @@ def execute_node(state):
     observations = []
 
     for tool_name in state["plan"]:
+        try:
+            increment_tool_calls(state)
+        except Exception as e:
+            observations.append({
+                "tool": "system_limit",
+                "result": {"error": str(e)}
+            })
+            observations.append({
+                "tool": "escalate_to_human",
+                "result": {"status": "forced_escalation", "reason": "Max tool calls exceeded"}
+            })
+            break
 
-        increment_tool_calls(state)
-        
-        result = execute_tool(
-            tool_name,
-            state
-        )
-
-        observations.append(
-            {
-                "tool": tool_name,
-                "result": result
-            }
-        )
+        try:
+            result = execute_tool(tool_name, state)
+            observations.append({"tool": tool_name, "result": result})
+        except Exception as e:
+            observations.append({"tool": tool_name, "result": {"error": str(e)}})
 
     state["tool_results"] = observations
 

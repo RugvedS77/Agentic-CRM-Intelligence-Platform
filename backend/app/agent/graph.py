@@ -5,6 +5,7 @@ from app.agent.state import AgentState
 from app.agent.nodes.classify import classify_node
 from app.agent.nodes.planner import planner_node
 from app.agent.nodes.execute import execute_node
+from app.agent.nodes.finish import finish_node
 
 
 builder = StateGraph(AgentState)
@@ -24,6 +25,11 @@ builder.add_node(
     execute_node
 )
 
+builder.add_node(
+    "finish",
+    finish_node
+)
+
 builder.set_entry_point(
     "classifier"
 )
@@ -36,6 +42,11 @@ builder.add_edge(
 builder.add_edge(
     "planner",
     "execute"
+)
+
+builder.add_edge(
+    "execute",
+    "finish"
 )
 
 graph = builder.compile()

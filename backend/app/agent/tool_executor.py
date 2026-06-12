@@ -25,6 +25,7 @@ from app.tools.reply_tools import (
     draft_reply
 )
 
+from app.tools.intel_tools import scrape_public_sentiment
 
 def execute_tool(
     tool_name: str,
@@ -84,6 +85,42 @@ def execute_tool(
             email_body=state["email_body"],
             rag_context=state["rag_context"]
         )
+    
+    elif tool_name == "create_internal_ticket":
+        return {
+            "action": "create_internal_ticket",
+            "title": f"Ticket for {email_id}",
+            "status": "created"
+        }
+
+    elif tool_name == "scrape_public_sentiment":
+        # Extract company from email domain or use a default for the test
+        domain = email.split('@')[-1].split('.')[0] if '@' in email else "SenAI"
+        return scrape_public_sentiment(domain)
+
+    elif tool_name == "send_auto_reply":
+        classification = state.get("classification", {})
+        category = (classification.get("category") or "").lower()
+        urgency = (classification.get("urgency") or "").lower()
+        requires_human = classification.get("requires_human", False)
+
+        blocked_categories = {"spam", "legal", "security_incident"}
+        if category in blocked_categories or urgency == "critical" or requires_human:
+            return {
+                "action": "send_auto_reply",
+                "email_id": email_id,
+                "status": "blocked",
+                "reason": (
+                    "Auto-reply blocked by safety policy: "
+                    f"category={category}, urgency={urgency}, requires_human={requires_human}"
+                )
+            }
+
+        return {
+            "action": "send_auto_reply",
+            "email_id": email_id,
+            "status": "sent"
+        }
 
     return {
         "error": f"Unknown tool {tool_name}"
