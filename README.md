@@ -1,6 +1,8 @@
-# SenAI CRM Intelligence Platform
+# Agentic CRM Intelligence Platform
 
 An autonomous CRM triage system that classifies, prioritizes, and acts on inbound emails using a multi-layer intelligence engine with RAG, LangGraph agents, and live web intelligence.
+
+GITHUB REPO LINK : https://github.com/RugvedS77/Agentic-CRM-Intelligence-Platform
 
 ## Architecture
 
